@@ -48,13 +48,17 @@ class Hero:
         self.starting_health = starting_health
         self.abilities = []
         self.armors = []
-        self. current_health = self.starting_health
+        self.current_health = self.starting_health
 
     def add_ability(self, ability):
         self.abilities.append(ability)
     
     def attack(self):
-        pass
+        '''Calculate the total damage from all ability attacks.
+          return: total: Integer
+        '''
+        for ability in self.abilities:
+            print(ability.attack())
 
     def defend(self, incoming_damage):
         pass
@@ -70,9 +74,9 @@ class Hero:
 
 if __name__=="__main__":
     ability = Ability('Great Debugging', 50)
-    ability2 = Ability('High Jumps', 50)
+    ability2 = Ability('High Jumps', 90)
     my_hero = Hero('Grace Hopper', 200)
     my_hero.add_ability(ability)
     my_hero.add_ability(ability2)
-    print(str(my_hero.abilities))
+    print(my_hero.attack())
 
