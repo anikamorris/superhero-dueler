@@ -11,12 +11,14 @@ class Ability:
         self.max_damage = max_damage
 
     def attack(self):
+        ''' Return a random value between 0 and 
+        the initialized max_damage strength. ''' 
         return random.randint(0, self.max_damage)
 
 class Armour:
 
     def __init__(self, name, max_block):
-        '''Create Instance Variables:
+        ''' Create Instance Variables:
         name: String
         max_block: Integer
         '''
@@ -24,7 +26,9 @@ class Armour:
         self.max_block = max_block
 
     def block(self):
-        pass
+        ''' Return a random value between 0 and 
+        the initialized max_block strength. ''' 
+        return random.randint(0, self.max_block)
 
 class Hero:
     
@@ -32,9 +36,19 @@ class Hero:
         '''Create Instance Variables:
         name: String
         starting_health: Integer
+
+        Instance properties:
+          abilities: List
+          armors: List
+          name: String
+          starting_health: Integer
+          current_health: Integer
         '''
         self.name = name
         self.starting_health = starting_health
+        self.abilities = []
+        self.armors = []
+        self. current_health = self.starting_health
 
     def add_ability(self, ability):
         pass
@@ -55,7 +69,7 @@ class Hero:
         pass
 
 if __name__=="__main__":
-    ability = Ability('Debugging Ability', 20)
-    print(ability.name)
-    print(ability.attack())
+    my_hero = Hero('Grace Hopper', 200)
+    print(my_hero.name)
+    print(my_hero.current_health)
 
