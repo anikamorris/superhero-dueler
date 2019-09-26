@@ -63,6 +63,9 @@ class Hero:
 
     def add_ability(self, ability):
         self.abilities.append(ability)
+    
+    def add_weapon(self, weapon):
+        self.abilities.append(weapon)
 
     def attack(self):
         '''Calculate the total damage from all ability attacks.
@@ -178,6 +181,79 @@ class Team:
             else:
                 print(hero.name + ": " + hero.kills)
 
+class Arena:
+    def __init__(self):
+        '''Instantiate properties
+            team_one: None
+            team_two: None
+        '''
+        self.team_one = None
+        self.team_two = None
+
+    def create_ability(self):
+        ''' Prompt user for Ability information
+            return Ability with values from user input'''
+        name = input('Name of ability: ')
+        max_damage = input('Maximum damage: ')
+        ability = Ability(name, max_damage)
+        return ability
+        
+    def create_weapon(self):
+        ''' Prompt user for Weapon information
+            return Weapon with values from user input'''
+        name = input('Name of weapon: ')
+        max_damage = input('Maximum damage: ')
+        weapon = Weapon(name, max_damage)
+        return weapon
+    
+    def create_armor(self):
+        ''' Prompt user for Armor information
+            return Armor with values from user input'''
+        name = input('Name of armor: ')
+        max_block = input('Maximum block: ')
+        armor = Armor(name, max_block)
+        return armor
+
+    def create_hero(self):
+        name = input("Name your hero: ")
+        hero = Hero(name)
+        menu_option = 0
+        while menu_option != '4':
+            menu_option = input("Enter 1 to add an ability\nEnter 2 to add a weapon\nEnter 3 to add armor\nEnter 4 when you're done\n")
+            if menu_option == '1':
+                ability = self.create_ability()
+                hero.add_ability(ability)
+            elif menu_option == '2':
+                weapon = self.create_weapon()
+                hero.add_weapon(weapon)
+            elif menu_option == '3':
+                armor = self.create_armor()
+                hero.add_armor(armor)
+            elif menu_option == '4':
+                print('Finished creating ' + hero.name)
+            else:
+                print('Please select a value 1-4')
+        return hero
+
+    def build_team_one(self):
+        '''Prompt the user to build team_one '''
+        team_name = input('What is your team name?\n')
+        self.team_one = Team(team_name)
+        num_heroes = input('How many heroes do you want on your team?\n')
+        for i in range(num_heroes):
+            hero = self.create_hero()
+            self.team_one.add_hero(hero)
+
+    def build_team_two(self):
+        '''Prompt the user to build team_two '''
+        team_name = input('What is your team name?\n')
+        self.team_two = Team(team_name)
+        num_heroes = input('How many heroes do you want on your team?\n')
+        for i in range(num_heroes):
+            hero = self.create_hero()
+            self.team_two.add_hero(hero)
+
+
 
 if __name__ == "__main__":
     hero1 = Hero("Wonder Woman")
@@ -188,4 +264,6 @@ if __name__ == "__main__":
     team1.remove_hero(hero2)
     team1.view_all_heroes()
     team1.remove_hero(hero1)
+    arena = Arena()
+    arena.create_hero()
     
