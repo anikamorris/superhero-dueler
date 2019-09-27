@@ -112,12 +112,13 @@ class Hero:
         while self.is_alive() and opponent.is_alive():
             if not self.abilities and not opponent.abilities:
                 print("Draw")
+                return
             else:
                 damage = self.attack()
-                print(damage)
+                print(self.name + ': ' + str(damage))
                 opponent.take_damage(damage)
                 damage = opponent.attack()
-                print(damage)
+                print(opponent.name + ': ' + str(damage))
                 self.take_damage(damage)
 
         if self.is_alive():
@@ -141,8 +142,8 @@ class Team:
         self.heroes = []
 
     def add_hero(self, hero):
+        '''Add hero to heroes list'''
         self.heroes.append(hero)
-        print(self.heroes[len(self.heroes)-1].name)
 
     def remove_hero(self, hero_name):
         '''Remove hero from heroes list given a name
@@ -161,6 +162,11 @@ class Team:
                 print(hero.name)
         else:
             print("There are no heroes on this team yet.")
+
+    def show_surviving_heroes(self):
+        for hero in self.heroes:
+            if hero.is_alive():
+                print(hero.name)
 
     def attack(self, other_team):
         index = random.randint(0, len(self.heroes)-1)
@@ -195,7 +201,7 @@ class Arena:
             return Ability with values from user input'''
         name = input('Name of ability: ')
         max_damage = input('Maximum damage: ')
-        ability = Ability(name, max_damage)
+        ability = Ability(name, int(max_damage))
         return ability
         
     def create_weapon(self):
@@ -203,7 +209,7 @@ class Arena:
             return Weapon with values from user input'''
         name = input('Name of weapon: ')
         max_damage = input('Maximum damage: ')
-        weapon = Weapon(name, max_damage)
+        weapon = Weapon(name, int(max_damage))
         return weapon
     
     def create_armor(self):
@@ -211,7 +217,7 @@ class Arena:
             return Armor with values from user input'''
         name = input('Name of armor: ')
         max_block = input('Maximum block: ')
-        armor = Armor(name, max_block)
+        armor = Armor(name, int(max_block))
         return armor
 
     def create_hero(self):
@@ -240,7 +246,7 @@ class Arena:
         team_name = input('What is your team name?\n')
         self.team_one = Team(team_name)
         num_heroes = input('How many heroes do you want on your team?\n')
-        for i in range(num_heroes):
+        for i in range(int(num_heroes)):
             hero = self.create_hero()
             self.team_one.add_hero(hero)
 
@@ -249,21 +255,92 @@ class Arena:
         team_name = input('What is your team name?\n')
         self.team_two = Team(team_name)
         num_heroes = input('How many heroes do you want on your team?\n')
-        for i in range(num_heroes):
+        for i in range(int(num_heroes)):
             hero = self.create_hero()
             self.team_two.add_hero(hero)
 
+    def team_battle(self):
+        '''Battle team_one and team_two'''
+        self.team_one.attack(self.team_two)
 
+    def count_alive(self, team):
+        ''' Count number of heroes alive on a team'''
+        alive = 0
+        for hero in team.heroes:
+            if hero.is_alive():
+                alive += 1
+        return alive
+    
+    def count_kills(self, team):
+        ''' Count kills on a team'''
+        team_kills = 0
+        for hero in team.heroes:
+            team_kills += hero.kills
+        return team_kills      
+
+    def count_deaths(self, team):
+        ''' Count deaths on a team'''
+        team_deaths = 0
+        for hero in team.heroes:
+            team_deaths += hero.deaths  
+        return team_deaths
+
+    def who_won(self):
+        '''Prints which team won to terminal'''
+        team_one_alive = self.count_alive(self.team_one)
+        team_two_alive = self.count_alive(self.team_two)
+        if team_one_alive > team_two_alive:
+            print (self.team_one.name + ' won!')
+        elif team_one_alive < team_two_alive:
+            print (self.team_two.name + ' won!')
+        else:
+            print ('Draw!')
+
+    def show_stats(self):
+        ''' Prints team statistics to terminal'''
+        team1_kills = self.count_kills(self.team_one)
+        team1_deaths = self.count_deaths(self.team_one)
+        average1_kills = team1_kills // len(self.team_one.heroes)
+        average1_deaths = team1_deaths // len(self.team_one.heroes) 
+
+        team2_kills = self.count_kills(self.team_two)
+        team2_deaths = self.count_deaths(self.team_two)
+        average2_kills = team2_kills // len(self.team_two.heroes)
+        average2_deaths = team2_deaths // len(self.team_two.heroes)
+
+        self.who_won()
+        print(self.team_one.name + ' average kills: ' + str(average1_kills))
+        print(self.team_one.name + ' average deaths: ' + str(average1_deaths))
+        print(self.team_one.name + "'s surviving heroes: ")
+        self.team_one.show_surviving_heroes()
+        
+        print(self.team_two.name + ' average kills: ' + str(average2_kills))
+        print(self.team_two.name + ' average deaths: ' + str(average2_deaths))
+        print(self.team_two.name + "'s surviving heroes: ")
+        self.team_two.show_surviving_heroes()
+        
 
 if __name__ == "__main__":
-    hero1 = Hero("Wonder Woman")
-    hero2 = Hero("Dumbledore")
-    team1 = Team("1")
-    team1.add_hero(hero1)
-    team1.add_hero(hero2)
-    team1.remove_hero(hero2)
-    team1.view_all_heroes()
-    team1.remove_hero(hero1)
+    game_is_running = True
+
+    # Instantiate Game Arena
     arena = Arena()
-    arena.create_hero()
-    
+
+    #Build Teams
+    arena.build_team_one()
+    arena.build_team_two()
+
+    while game_is_running:
+
+        arena.team_battle()
+        arena.show_stats()
+        play_again = input("Play Again? Y or N: ")
+
+        #Check for Player Input
+        if play_again.lower() == "n":
+            game_is_running = False
+
+        else:
+            #Revive heroes to play again
+            arena.team_one.revive_heroes()
+            arena.team_two.revive_heroes()
